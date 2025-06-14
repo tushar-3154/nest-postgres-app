@@ -7,37 +7,37 @@ export class Profile {
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     length: 100,
   })
-  firstName: string;
+  firstName?: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     length: 100,
   })
-  lastName: string;
+  lastName?: string;
 
   @Column({
     type: 'varchar',
     nullable: true,
     length: 10,
   })
-  gender: string;
+  gender?: string;
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  dateOfBirth: Date;
+  dateOfBirth?: Date;
 
   @Column({
     type: 'text',
     nullable: true,
   })
-  bio: string;
+  bio?: string;
 
   @Column({ type: 'text', nullable: true })
-  profileImage: string;
+  profileImage?: string;
 }
