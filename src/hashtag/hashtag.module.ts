@@ -8,5 +8,6 @@ import { HashtagService } from './hashtag.service';
   imports: [TypeOrmModule.forFeature([Hashtag])],
   controllers: [HashtagController],
   providers: [HashtagService],
+  exports: [HashtagService],
 })
 export class HashtagModule {}

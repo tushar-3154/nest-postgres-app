@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
+import { HashtagService } from '../hashtag/hashtag.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { Tweet } from './tweet.entity';
 
@@ -9,6 +10,7 @@ import { Tweet } from './tweet.entity';
 export class TweetService {
   constructor(
     private readonly userService: UserService,
+    private readonly hashtagService: HashtagService,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
@@ -29,9 +31,14 @@ export class TweetService {
       );
     }
 
+    const hashtags = await this.hashtagService.findHashtags(
+      createTweetDto.hashtags ?? [],
+    );
+
     const tweet = this.tweetRepository.create({
       ...createTweetDto,
-      user: user,
+      user,
+      hashtags,
     });
 
     await this.tweetRepository.save(tweet);
