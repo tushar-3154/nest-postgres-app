@@ -11,6 +11,10 @@ export class ProfileService {
   ) {}
 
   async getAllProfiles() {
-    return this.profileRepository.find();
+    return this.profileRepository.find({
+      relations: {
+        user: true,
+      },
+    });
   }
 }

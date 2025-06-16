@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProfileModule } from './profile/profile.module';
+import { TweetModule } from './tweet/tweet.module';
 import { UserModule } from './users/user.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { UserModule } from './users/user.module';
     }),
     UserModule,
     ProfileModule,
+    TweetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

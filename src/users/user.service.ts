@@ -16,31 +16,36 @@ export class UserService {
   ) {}
 
   async getAllUsers() {
-    return this.userRepository
-      .find
-      // {
-      //   relations: {
-      //     profile: true,
-      //   },
-      // }
-      ();
+    return this.userRepository.find({
+      relations: {
+        profile: true,
+      },
+    });
   }
 
   async createUser(userDto: CreateUserDto) {
-    //Create a Profile & Save
-
-    // userDto.profile = userDto.profile ?? {};
-    // const profile = this.profileRepository.create(userDto.profile);
-
-    // await this.profileRepository.save(profile);
-
-    //Create User Object
     const user = this.userRepository.create(userDto);
 
-    //Set the profile
-    // user.profile = profile;
-
-    //Save the user object
     return await this.userRepository.save(user);
+  }
+
+  async deleteUser(id: number) {
+    //Find the user with given ID
+
+    // let user: any = await this.userRepository.findOneBy({ id });
+    // const user = await this.userRepository.findOne({
+    //   where: { id },
+    //   relations: ['profile'],
+    // });
+
+    //Delete user
+    await this.userRepository.delete(id);
+
+    //Delete Profile
+    // if (user?.profile?.id) {
+    //   await this.profileRepository.delete(user.profile.id);
+    // }
+
+    return { deleted: true };
   }
 }
