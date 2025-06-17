@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from 'src/profile/profile-entity';
 import { Repository } from 'typeorm';
@@ -11,11 +12,17 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
+    private readonly configService: ConfigService,
+
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
   ) {}
 
   async getAllUsers() {
+    const enviroment = this.configService.get<string>('ENV_MODE');
+
+    console.log(enviroment);
+
     return this.userRepository.find({
       relations: {
         profile: true,
