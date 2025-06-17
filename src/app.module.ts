@@ -9,6 +9,7 @@ import { HashtagModule } from './hashtag/hashtag.module';
 import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
 import { UserModule } from './users/user.module';
+import { AuthModule } from './auth/auth.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -39,6 +40,7 @@ const ENV = process.env.NODE_ENV;
     ProfileModule,
     TweetModule,
     HashtagModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
