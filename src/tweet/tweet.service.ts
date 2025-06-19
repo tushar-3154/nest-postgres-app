@@ -22,6 +22,12 @@ export class TweetService {
   ) {}
 
   async getTweets(userId: number) {
+    const user = await this.userService.FindUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException(`User with userId ${userId} is not found!`);
+    }
+
     return await this.tweetRepository.find({
       where: { user: { id: userId } },
       relations: { user: true, hashtags: true },

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from 'src/profile/profile-entity';
@@ -16,24 +20,52 @@ export class UserService {
 
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-  ) {}
+  ) { }
 
   async getAllUsers() {
-    const enviroment = this.configService.get<string>('ENV_MODE');
-
-    console.log(enviroment);
-
-    return this.userRepository.find({
-      relations: {
-        profile: true,
-      },
-    });
+    try {
+      return await this.userRepository.find({
+        relations: {
+          profile: true,
+        },
+      });
+    } catch (error) {
+      console.log('error.code', error.code);
+      if (error.code === 'ECONNREFUSED') {
+        throw new RequestTimeoutException(
+          'An Error has occurred . please try again later',
+          {
+            description: 'Could not connect to databse',
+          },
+        );
+      }
+      console.log(error);
+    }
   }
 
   async createUser(userDto: CreateUserDto) {
-    const user = this.userRepository.create(userDto);
+    try {
+      userDto.profile = userDto.profile ?? {};
 
-    return await this.userRepository.save(user);
+      const user = this.userRepository.create(userDto);
+
+      return await this.userRepository.save(user);
+    } catch (error) {
+      console.log('error.code', error.code);
+      if (error.code === 'ECONNREFUSED') {
+        throw new RequestTimeoutException(
+          'An error has occurred. please try again',
+          {
+            description: 'Could not connect to the database',
+          },
+        );
+      }
+      if (error.code === '23505') {
+        throw new BadRequestException(
+          'There is some duplicate value for the user in Database',
+        );
+      }
+    }
   }
 
   async deleteUser(id: number) {
