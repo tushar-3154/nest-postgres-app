@@ -20,7 +20,7 @@ export class TweetService {
     private readonly hashtagService: HashtagService,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
-  ) { }
+  ) {}
 
   async getTweets(userId: number, pageQueryDto: PaginationQueryDto) {
     const user = await this.userService.FindUserById(userId);

@@ -16,7 +16,7 @@ import { TweetService } from './tweet.service';
 
 @Controller('tweet')
 export class TweetController {
-  constructor(private tweetService: TweetService) { }
+  constructor(private tweetService: TweetService) {}
 
   @Get(':userId')
   GetTweets(
