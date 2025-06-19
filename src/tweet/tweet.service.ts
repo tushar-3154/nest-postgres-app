@@ -5,6 +5,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Paginated } from 'src/common/pagination/paginater.interface';
 import { UserService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
 import { PaginationQueryDto } from '../common/pagination/dto/paginations-query.dto';
@@ -24,7 +25,10 @@ export class TweetService {
     private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  async getTweets(userId: number, pageQueryDto: PaginationQueryDto) {
+  async getTweets(
+    userId: number,
+    pageQueryDto: PaginationQueryDto,
+  ): Promise<Paginated<Tweet>> {
     const user = await this.userService.FindUserById(userId);
 
     if (!user) {
