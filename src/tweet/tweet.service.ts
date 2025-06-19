@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
+import { PaginationQueryDto } from '../common/pagination/dto/paginations-query.dto';
 import { HashtagService } from '../hashtag/hashtag.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
@@ -19,19 +20,24 @@ export class TweetService {
     private readonly hashtagService: HashtagService,
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
-  ) {}
+  ) { }
 
-  async getTweets(userId: number) {
+  async getTweets(userId: number, pageQueryDto: PaginationQueryDto) {
     const user = await this.userService.FindUserById(userId);
 
     if (!user) {
       throw new NotFoundException(`User with userId ${userId} is not found!`);
     }
 
-    return await this.tweetRepository.find({
-      where: { user: { id: userId } },
-      relations: { user: true, hashtags: true },
-    });
+    return await this.tweetRepository.find(
+      {
+        where: { user: { id: userId } },
+        relations: { user: true, hashtags: true },
+        skip: (pageQueryDto.page - 1) * pageQueryDto.limit,
+        take: pageQueryDto.limit,
+      },
+      //
+    );
   }
 
   async CreateTweet(createTweetDto: CreateTweetDto) {

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -7,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserAlredyExistsException } from 'src/CustomExceptions/user-already-exists-exceptions';
 import { Profile } from 'src/profile/profile-entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -49,17 +49,21 @@ export class UserService {
     try {
       userDto.profile = userDto.profile ?? {};
 
-      const existingUser = await this.userRepository.findOne({
-        where: [{ username: userDto.username }, { email: userDto.email }],
+      const existingUserWithUsername = await this.userRepository.findOne({
+        where: [{ username: userDto.username }],
       });
       // console.log('existingUser', existingUser);
 
-      if (existingUser) {
-        console.log('existingUser');
+      if (existingUserWithUsername) {
+        throw new UserAlredyExistsException('username', userDto.username);
+      }
 
-        throw new BadRequestException(
-          'There is already a use with given usename / email.',
-        );
+      const existingUserWithemail = await this.userRepository.findOne({
+        where: [{ email: userDto.email }],
+      });
+
+      if (existingUserWithemail) {
+        throw new UserAlredyExistsException('email', userDto.email);
       }
 
       const user = this.userRepository.create(userDto);
