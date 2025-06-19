@@ -20,6 +20,7 @@ export class User {
     type: 'varchar',
     nullable: false,
     length: 50,
+    unique: true,
   })
   username: string;
 

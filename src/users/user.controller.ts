@@ -12,7 +12,7 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private usersService: UserService) {}
+  constructor(private usersService: UserService) { }
 
   @Get()
   async getAllUsers() {
@@ -21,9 +21,9 @@ export class UserController {
 
   @Post()
   async createUser(@Body() user: CreateUserDto) {
-    console.log(user);
+    // console.log(user);
 
-    return this.usersService.createUser(user);
+    return await this.usersService.createUser(user);
   }
 
   @Delete(':id')
