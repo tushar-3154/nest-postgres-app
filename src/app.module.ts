@@ -10,6 +10,7 @@ import { ProfileModule } from './profile/profile.module';
 import { TweetModule } from './tweet/tweet.module';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
+import { PaginationModule } from './common/pagination/pagination.module';
 import envValidation from './config/env.validation';
 
 const ENV = process.env.NODE_ENV;
@@ -43,6 +44,7 @@ const ENV = process.env.NODE_ENV;
     TweetModule,
     HashtagModule,
     AuthModule,
+    PaginationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
