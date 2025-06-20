@@ -6,9 +6,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationQueryDto } from 'src/common/pagination/dto/paginations-query.dto';
+import { Paginated } from 'src/common/pagination/paginater.interface';
 import { UserAlredyExistsException } from 'src/CustomExceptions/user-already-exists-exceptions';
 import { Profile } from 'src/profile/profile-entity';
 import { Repository } from 'typeorm';
+import { PaginationProvider } from '../common/pagination/pagination.provider';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user-entity';
 
@@ -22,15 +25,25 @@ export class UserService {
 
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
+    private readonly paginationProvider: PaginationProvider,
   ) { }
 
-  async getAllUsers() {
+  async getAllUsers(
+    paginationQueryDto: PaginationQueryDto,
+  ): Promise<Paginated<User>> {
     try {
-      return await this.userRepository.find({
-        relations: {
-          profile: true,
-        },
-      });
+      return await this.paginationProvider.paginateQuery(
+        paginationQueryDto,
+        this.userRepository,
+        {},
+        ['profile'],
+      );
+
+      // return await this.userRepository.find({
+      //   relations: {
+      //     profile: true,
+      //   },
+      // });
     } catch (error) {
       console.log('error.code', error.code);
       if (error.code === 'ECONNREFUSED') {
@@ -42,6 +55,10 @@ export class UserService {
         );
       }
       console.log(error);
+      // console.error('Error fetching users:', error);
+
+      // Either throw to satisfy the return type:
+      throw error;
     }
   }
 

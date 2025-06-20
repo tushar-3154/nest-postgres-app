@@ -17,7 +17,8 @@ export class PaginationProvider {
   public async paginateQuery<T extends ObjectLiteral>(
     paginationQueryDto: PaginationQueryDto,
     repository: Repository<T>,
-    where: FindOptionsWhere<T>,
+    where?: FindOptionsWhere<T>,
+    relations?: string[],
   ): Promise<Paginated<T>> {
     const findOption: FindManyOptions<T> = {
       skip: (paginationQueryDto.page - 1) * paginationQueryDto.limit,
@@ -26,6 +27,10 @@ export class PaginationProvider {
 
     if (where) {
       findOption.where = where;
+    }
+
+    if (relations) {
+      findOption.relations = relations;
     }
 
     const result = await repository.find(findOption);

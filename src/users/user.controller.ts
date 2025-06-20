@@ -6,7 +6,9 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
+import { PaginationQueryDto } from '../common/pagination/dto/paginations-query.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
@@ -15,8 +17,8 @@ export class UserController {
   constructor(private usersService: UserService) {}
 
   @Get()
-  async getAllUsers() {
-    return this.usersService.getAllUsers();
+  async getAllUsers(@Query() paginationQueryDto: PaginationQueryDto) {
+    return this.usersService.getAllUsers(paginationQueryDto);
   }
 
   @Get(':id')
