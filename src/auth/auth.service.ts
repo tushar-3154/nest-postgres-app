@@ -10,6 +10,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import authConfig from './config/auth.config';
 import { LoginDto } from './dto/login.dto';
 import { HashingProvider } from './provider/hashing.provider';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,8 @@ export class AuthService {
     private readonly authConfiguration: ConfigType<typeof authConfig>,
 
     private readonly hashingProvider: HashingProvider,
+
+    private readonly jwtService: JwtService,
   ) {}
 
   isAuthenticated: boolean = false;
@@ -38,10 +41,21 @@ export class AuthService {
     if (!isEqual) {
       throw new UnauthorizedException('Incorrect password');
     }
+
+    const token = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email: user.email,
+      },
+      {
+        secret: this.authConfiguration.secret,
+        expiresIn: this.authConfiguration.expireIn,
+        audience: this.authConfiguration.audiance,
+      },
+    );
+
     return {
-      data: user,
-      success: true,
-      message: 'User logged in successfully',
+      token: token,
     };
   }
 

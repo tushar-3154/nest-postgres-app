@@ -13,6 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
+// @UseGuards(AuthorizeGuard)
 export class UserController {
   constructor(private usersService: UserService) {}
 

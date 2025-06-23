@@ -12,9 +12,10 @@ import { UserService } from './user.service';
     PaginationModule,
     TypeOrmModule.forFeature([User, Profile]),
     forwardRef(() => AuthModule),
+
   ],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule { }
