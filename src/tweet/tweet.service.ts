@@ -9,8 +9,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated } from 'src/common/pagination/paginater.interface';
-import { Hashtag } from 'src/hashtag/hashtag-entity';
-import { User } from 'src/users/user-entity';
 import { UserService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
 import { PaginationQueryDto } from '../common/pagination/dto/paginations-query.dto';
@@ -48,8 +46,8 @@ export class TweetService {
   }
 
   async CreateTweet(createTweetDto: CreateTweetDto, userId: number) {
-    let user: User;
-    let hashtags: Hashtag[];
+    let user: any;
+    let hashtags: any;
     try {
       user = await this.userService.FindUserById(userId);
 
