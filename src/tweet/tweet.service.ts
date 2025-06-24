@@ -47,6 +47,7 @@ export class TweetService {
 
   async CreateTweet(createTweetDto: CreateTweetDto, userId: number) {
     let user: any;
+
     let hashtags: any;
     try {
       user = await this.userService.FindUserById(userId);
