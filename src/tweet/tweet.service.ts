@@ -1,11 +1,16 @@
 import {
+  BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   Param,
   ParseIntPipe,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated } from 'src/common/pagination/paginater.interface';
+import { Hashtag } from 'src/hashtag/hashtag-entity';
+import { User } from 'src/users/user-entity';
 import { UserService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
 import { PaginationQueryDto } from '../common/pagination/dto/paginations-query.dto';
@@ -23,7 +28,7 @@ export class TweetService {
     @InjectRepository(Tweet)
     private readonly tweetRepository: Repository<Tweet>,
     private readonly paginationProvider: PaginationProvider,
-  ) {}
+  ) { }
 
   async getTweets(
     userId: number,
@@ -42,18 +47,25 @@ export class TweetService {
     );
   }
 
-  async CreateTweet(createTweetDto: CreateTweetDto) {
-    const user = await this.userService.FindUserById(createTweetDto.userId);
+  async CreateTweet(createTweetDto: CreateTweetDto, userId: number) {
+    let user: User;
+    let hashtags: Hashtag[];
+    try {
+      user = await this.userService.FindUserById(userId);
 
-    if (!user) {
-      throw new NotFoundException(
-        `User with ID ${createTweetDto.userId} not found`,
-      );
+      if (createTweetDto.hashtags) {
+        hashtags = await this.hashtagService.findHashtags(
+          createTweetDto.hashtags ?? [],
+        );
+      }
+    } catch (error) {
+      throw new RequestTimeoutException();
     }
+    console.log(createTweetDto.hashtags, hashtags);
 
-    const hashtags = await this.hashtagService.findHashtags(
-      createTweetDto.hashtags ?? [],
-    );
+    if (createTweetDto.hashtags?.length !== hashtags?.length) {
+      throw new BadRequestException();
+    }
 
     const tweet = this.tweetRepository.create({
       ...createTweetDto,
@@ -61,7 +73,11 @@ export class TweetService {
       hashtags,
     });
 
-    await this.tweetRepository.save(tweet);
+    try {
+      await this.tweetRepository.save(tweet);
+    } catch (error) {
+      throw new ConflictException(error);
+    }
 
     return tweet;
   }

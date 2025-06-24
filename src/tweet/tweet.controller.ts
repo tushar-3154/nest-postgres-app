@@ -9,6 +9,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ActiveUser } from 'src/auth/decorates/active-user.decorator';
 import { PaginationQueryDto } from 'src/common/pagination/dto/paginations-query.dto';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
@@ -16,7 +17,7 @@ import { TweetService } from './tweet.service';
 
 @Controller('tweet')
 export class TweetController {
-  constructor(private tweetService: TweetService) {}
+  constructor(private tweetService: TweetService) { }
 
   @Get(':userId')
   GetTweets(
@@ -29,8 +30,8 @@ export class TweetController {
   }
 
   @Post()
-  CreateTweet(@Body() tweet: CreateTweetDto) {
-    return this.tweetService.CreateTweet(tweet);
+  CreateTweet(@Body() tweet: CreateTweetDto, @ActiveUser('sub') userId) {
+    return this.tweetService.CreateTweet(tweet, userId);
   }
 
   @Patch()
